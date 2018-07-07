@@ -174,5 +174,7 @@ This project is licensed under the GNUv3 license - see the [LICENSE.md](LICENSE.
 ## Acknowledgments
 
 First of all to the [mopidy team](https://www.mopidy.com/)
+
 To the [Raspotify](https://github.com/dtcooper/raspotify) creator that allows the raspberry pi to be used as a spotify device.
+
 And to the creators of all the other dependecies I use.
