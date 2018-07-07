@@ -1,0 +1,3 @@
+Replace mopidy.conf at
+/home/pi/.config/mopidy
+/etc/mopidy/mopidy.conf

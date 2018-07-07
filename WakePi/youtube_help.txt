@@ -1,0 +1,8 @@
+The youtube extension works weird many times. 
+Playlists usually fail. Easiest way is to share a song from
+youtube app, if you send an url make sure that has no "&list" 
+or other atributes than "watch?v=". 
+You can send any link or url while you are in the music menu. 
+You will be given to choose between playing, adding to the current 
+tracklist or shuffling (that has the same effect as playing because 
+playlists don't work so you will send unique songs)
