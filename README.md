@@ -152,7 +152,7 @@ You have to write this:
 ```
 And that's all folks!
 
-## Sync with google calendar (or other ical calendars)
+### Sync with google calendar (or other ical calendars)
 
 In the telegram UI (bot), once you send the password and press "menu" you will see a configuration opion, there you can add calendars in a url ical format. [How to get that url from google calendar](https://mas.echurchgiving.com/hc/en-us/articles/115004079647-How-do-I-get-an-iCal-feed-from-Google-Calendar-)
 
