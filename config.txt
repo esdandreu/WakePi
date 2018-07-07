@@ -3,15 +3,14 @@ Hello world
 
 [Spotipy]
 username = 
-client_id = 
-client_secret = 
+client_id = e31f747ffb9f434ab466792e6c7f5a6a
+client_secret = 65704cb4f9e841e7b2601882ced44e89
 redirect_uri = https://www.google.com/
 
 [Bot Token]
 
 
 [Calendar]
-
 
 [Default Controls]
 volume = 60
