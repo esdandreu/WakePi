@@ -13,6 +13,10 @@ First of all, all this code has been tested in a RPi 3B, I assume that your RPi 
 I would love to have a file that installs everything. First of all, I install most of the things twice, as superuser and as normal user, the normal user installation is for developer debugg, the superuser installation will run at raspberry pi's boot (when RPi turns on the WakePi code runs too, you only need to have a screen, keyboard and mouse the first time you run it to configure a couple of things)
 
 ## Prerequisites
+
+### Have a Raspberry Pi with Raspbian
+I can't buy you a RPi but I can show you [how to install Raspbian](https://www.raspberrypi.org/documentation/installation/noobs.md)
+
 ### Have a Telegram bot (UI)
 [Create a telegram bot using a telegram bot, BotFather](https://core.telegram.org/bots#6-botfather)
 
@@ -113,6 +117,7 @@ mopidy.conf -> /home/pi/.config/mopidy/etc/mopidy/mopidy.conf
 Why change mopidy.conf? Because I give you a preconfigured file that will save work.)
 
 ### Configure your spotify account
+
 First input your username and password in the mopidy.conf section of Spotify, run in terminal:
 ```
 sudo nano /home/pi/.config/mopidy/etc/mopidy/mopidy.conf
@@ -130,6 +135,8 @@ To save the changes and exit press "Ctrl+X", then "Y" and "Enter".
 You need a premium account. If you are logged with facebook check this: [username](https://www.spotify.com/account/overview/) [password](https://www.spotify.com/au/account/set-device-password/)
 I give you the client_id and the client_secret of my Spotify app, if you prefer to create your you can do it [here](https://developer.spotify.com/my-applications/#!/applications)
 
+**Then go to the config.txt located in the WakePi folder and add there the username too.**
+You don't need to add the password there but the first time you run the code you will be prompt to log in your spotify account and grant access to the app, then you have to copy the full url of the webpage you have been redirected (google) and paste it in the terminal ("Ctrl+Mayus+V")
 
 ### Enable auto boot
 
@@ -150,7 +157,7 @@ You have to write this:
 ```
 @sudo /home/pi/WakePi/init_wakepi.sh
 ```
-And that's all folks!
+And that's all folks! Reboot the RPi and check that everything works correctly.
 
 ### Sync with google calendar (or other ical calendars)
 
