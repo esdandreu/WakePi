@@ -165,7 +165,7 @@ In the telegram UI (bot), once you send the password and press "menu" you will s
 
 ## Authors
 
-* **Andreu Giménez Bolinches** - *Initiall work* - [esdandreu](https://github.com/esdandreu) - [Donations allowed](paypal.me/esdandreu)
+* **Andreu Giménez Bolinches** - *Initiall work* - [esdandreu](https://github.com/esdandreu) - [Donations allowed](https://www.paypal.me/esdandreu)
 
 ## License
 
