@@ -86,7 +86,7 @@ sudo pip3 install telepot
 sudo pip3 install subprocess
 sudo pip3 install spotipy
 ```
-(If you want to develope and test things in the python console you will need to install the dependencies without "sudo", that is for superusers that is the way python is run at boot)
+(If you want to develope and test things in the python console you will need to install again the dependencies without "sudo", that is for superusers that is the way python is run at boot)
 
 ## Installing WakePi
 
