@@ -1,0 +1,31 @@
+[Password]
+Hello world
+
+[Spotipy]
+username = 
+client_id = 
+client_secret = 
+redirect_uri = https://www.google.com/
+
+[Bot Token]
+
+
+[Calendar]
+
+
+[Default Controls]
+volume = 60
+
+[Alarm Controls]
+snooze_min (minutes) = 10
+ring_start_volume (%) = 15
+max_ringing_volume (%) = 60
+half_ring_volume_sec (seconds) = 14
+max_ring_volume_sec (seconds) = 35
+other_event_time_before (minutes) = 30
+first_event_time_before (minutes) = 60
+max_ringing_time (minutes) = 10
+max_snooze_counts (-) = 6
+ring_refresh_sec (seconds) = 10
+alarm_stop_password  = I am awake
+ring_music  = spotify:user:2155eprgg73n7x46ybpzpycra:playlist:64xSAgfPBl8HjIKJBi3CIi
