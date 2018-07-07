@@ -35,7 +35,7 @@ sudo apt-get update
 sudo apt-get install mopidy
 ```
 
-### *Install mpd*
+#### *Install mpd*
 
 Run in terminal:
 ```
