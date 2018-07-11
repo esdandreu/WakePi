@@ -144,14 +144,7 @@ class State( object ):
             for name in config_list._fields:
                 if not 'ring_music' in name:
                     value = getattr(config_list,name)
-                    if 'time' in name or 'min' in name:
-                        units = ' (minutes)'
-                    elif 'volume' in name:
-                        units = ' (%)'
-                    elif 'counts' in name:
-                        units = ' (-)'
-                    else:
-                        units = ''
+                    units = self.alarm.get_config_units(name)
                     if isinstance(value,int):
                         value = str(value)
                     button_text = u'\U00002699' + name + ' = ' + value + units 
