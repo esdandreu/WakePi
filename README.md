@@ -10,7 +10,7 @@ I made this because I was tired of usless alarm clocks with radio that did not a
 
 First of all, all this code has been tested in a RPi 3B, I assume that your RPi is connected to the Internet by means of cable or wifi.
 
-I would love to have a file that installs everything. First of all, I install most of the things twice, as superuser and as normal user, the normal user installation is for developer debugg, the superuser installation will run at raspberry pi's boot (when RPi turns on the WakePi code runs too, you only need to have a screen, keyboard and mouse the first time you run it to configure a couple of things)
+I would love to have a file that installs everything. I install some things twice, as superuser and as normal user, the normal user installation is for developer debugg, the superuser installation will run at raspberry pi's boot (when RPi turns on the WakePi code runs too, you only need to have a screen, keyboard and mouse the first time you run it to configure a couple of things)
 
 ## Prerequisites
 
