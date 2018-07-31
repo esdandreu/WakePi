@@ -15,13 +15,13 @@ class CommandProcess:
     def command_process(self, command):
         ## Command processing (most hackable part)
         if '/reboot' in command:
-            print('Reebot asked')
+            print('INFO: Reebot asked')
             for chat_id in self.state.chat_id_list:
                 self.bot.sendMessage(chat_id, 'Reboot asked')
             os.execv(self.state.config.path+'main.py',[''])
             return
         elif '/update' in command:
-            print('Update and reboot asked')
+            print('INFO: Update and reboot asked')
             for chat_id in self.state.chat_id_list:
                 self.bot.sendMessage(chat_id, 'Update and reboot asked')
             os.execv(self.state.config.path+'main.py',[''])
