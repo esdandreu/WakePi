@@ -27,6 +27,7 @@ class CommandProcess:
                 self.bot.sendMessage(chat_id, 'Update and reboot asked')
             subprocess.check_output([cd,self.state.config.path])
             subprocess.check_output([git,pull,origin,master])
+            print('INFO: Update completed')
             os.execv(self.state.config.path+'main.py',[''])
             return
         elif '/refresh' in command:
