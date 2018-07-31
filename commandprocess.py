@@ -20,6 +20,12 @@ class CommandProcess:
                 self.bot.sendMessage(chat_id, 'Reboot asked')
             os.execv(self.state.config.path+'main.py',[''])
             return
+        elif '/update' in command:
+            print('Update and reboot asked')
+            for chat_id in self.state.chat_id_list:
+                self.bot.sendMessage(chat_id, 'Update and reboot asked')
+            os.execv(self.state.config.path+'main.py',[''])
+            return
         elif '/refresh' in command:
             self.state.refresh_dashboard()
             return
