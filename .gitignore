@@ -108,3 +108,6 @@ config.txt
 
 # alarms file
 saved_alarms.py
+
+# pyc files
+*.pyc
