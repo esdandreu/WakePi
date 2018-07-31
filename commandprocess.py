@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import telepot
 import os
 import datetime
+import subprocess
 from alarmcontrols import AlarmControls
 from mopidycontrols import MopidyControls
 
@@ -24,6 +25,8 @@ class CommandProcess:
             print('INFO: Update and reboot asked')
             for chat_id in self.state.chat_id_list:
                 self.bot.sendMessage(chat_id, 'Update and reboot asked')
+            subprocess.check_output([cd,self.state.config.path])
+            subprocess.check_output([git,pull,origin,master])
             os.execv(self.state.config.path+'main.py',[''])
             return
         elif '/refresh' in command:
