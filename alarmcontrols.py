@@ -38,18 +38,20 @@ class AlarmControls:
     def set_ring_volume(self,ringing_time):
         '''Sets the ring volume according to two linear relationships, one for the first
            half volume augment and the other until the maximum ringing volume'''
-        if ringing_time < self.c.half_ring_volume_sec:
-            vol_slope = int((self.c.max_ringing_volume-self.c.ring_start_volume)/2
+        if ringing_time <= self.c.half_ring_volume_sec:
+            vol_slope = (((self.c.max_ringing_volume-self.c.ring_start_volume)/2)
                             /self.c.half_ring_volume_sec)
             volume = int(self.c.ring_start_volume+vol_slope*ringing_time)
-        elif ringing_time < self.c.max_ring_volume_sec:
-            vol_slope = int((self.c.max_ringing_volume-self.c.ring_start_volume)/2
+        elif ringing_time <= self.c.max_ring_volume_sec:
+            vol_slope = (((self.c.max_ringing_volume-self.c.ring_start_volume)/2)
                             /(self.c.max_ring_volume_sec-self.c.half_ring_volume_sec))
-            volume = int(self.c.ring_start_volume
-                         +(self.c.max_ringing_volume-self.c.ring_start_volume)/2
+            volume = int((self.c.max_ringing_volume+self.c.ring_start_volume)/2
                          +vol_slope*(ringing_time-self.c.half_ring_volume_sec))
         else:
             volume = int(self.c.max_ringing_volume)
+        volume = min(volume,int(self.c.max_ringing_volume))
+        print(volume)
+        print(ringing_time)
         self.state.mopidy.set_volume_sys(volume)
     
     def get_alarms(self):
@@ -70,10 +72,9 @@ class AlarmControls:
             for line in text_config:
                 for config_name in config_list._fields:
                     if config_name in line:
-                        if not '(' in line:
-                            config_value = line.split(' = ')[1].strip()
-                        else:
-                            config_value = int(line.split(' = ')[1].strip())
+                        config_value = line.split(' = ')[1].strip()
+                        if config_value.isdigit():
+                            config_value = int(config_value)
                         setattr(config_list,config_name,config_value)
             return config_list
         except:
@@ -131,10 +132,10 @@ class AlarmControls:
                     if int(config_value)>100:
                         return 'Up to 100%'
                     if 'ring_start_volume' in config_name:
-                        if int(config_value)>self.c.max_ringing_volume:
+                        if int(config_value)>int(self.c.max_ringing_volume):
                             return "Start Vol(<)Max Vol"
                     elif 'max_ringing_volume' in config_name:
-                        if int(config_value)<self.c.ring_start_volume:
+                        if int(config_value)<int(self.c.ring_start_volume):
                             return "Max Vol(>)Start Vol"
                 elif 'max_ringing_time' in config_name:
                     if int(config_value)<5 or int(config_value)>60:
@@ -148,17 +149,21 @@ class AlarmControls:
                     if int(config_value)>180:
                         return 'Up to 3 minutes'
                     elif 'max' in config_name:
-                        if int(config_value)<self.c.half_ring_volume_sec:
+                        if int(config_value)<int(self.c.half_ring_volume_sec):
                             return 'Max Time(>)Half Time'
                     elif 'half' in config_name:
-                        if int(config_value)>self.c.max_ring_volume_sec:
+                        if int(config_value)>int(self.c.max_ring_volume_sec):
                             return 'Half Time(<)Max Time'
                 elif 'ring_refresh_sec' in config_name:
                     if int(config_value)>60 or int(config_value<5):
                         return 'Betweeen 5 and 60 seconds'
                 else:
                     return 'Config name not recognized!'
-        setattr(self.c,config_name,str(config_value))
+        unit = self.get_config_units(config_name)
+        if unit == '':
+            setattr(self.c,config_name,str(config_value))
+        else:
+            setattr(self.c,config_name,int(config_value))
         config_list = []
         for name in self.c._fields:
             value = getattr(self.c,name)
@@ -186,9 +191,9 @@ class AlarmControls:
             elif 'max_snooze_counts' in config_name:
                 options_list = list(range(1,11,1))
             elif 'ring_start_volume' in config_name:
-                options_list = list(range(0,self.c.max_ringing_volume,5))
+                options_list = list(range(0,int(self.c.max_ringing_volume),5))
             elif 'max_ringing_volume' in config_name:
-                options_list = list(range(self.c.ring_start_volume,105,5))
+                options_list = list(range(int(self.c.ring_start_volume),105,5))
             elif 'max_ringing_time' in config_name:
                 options_list = list(range(5,35,5))
             elif 'event_time_before' in config_name:

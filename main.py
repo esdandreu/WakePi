@@ -50,7 +50,7 @@ def time_check(state):
     last_alarm_check = datetime.datetime.utcnow()
     PERIOD_ALARM_CHECK = 10 # [seconds]
     last_ringing_check = datetime.datetime.utcnow()
-    PERIOD_RINGING_CHECK = 2 # [seconds]
+    PERIOD_RINGING_CHECK = 1 # [seconds]
     ringing_time = 0
     while True:
         try:
@@ -71,15 +71,15 @@ def time_check(state):
                     alarm.alarm_check()
                     ringing_time = 0
             else:
-                if (now-last_ringing_check).total_seconds() > PERIOD_RINGING_CHECK:
+                if (now-last_ringing_check).total_seconds() >= PERIOD_RINGING_CHECK:
                     last_ringing_check = now
-                    alarm.set_ring_volume(ringing_time)
+                    state.alarm.set_ring_volume(ringing_time)
                     ringing_time += PERIOD_RINGING_CHECK
-                    if ringing_time % alarm.c.ring_refresh_sec == 0:
-                        state.set_reply_text('Type:'+alarm.c.alarm_stop_password,
+                    if ringing_time % state.alarm.c.ring_refresh_sec == 0:
+                        state.set_reply_text('Type:'+state.alarm.c.alarm_stop_password,
                                              dash_join=False)
                         state.refresh_dashboard()
-                    elif ringing_time > int(alarm.c.max_ringing_time)*60:
+                    elif ringing_time > int(state.alarm.c.max_ringing_time)*60:
                         state('music')
                         state.keyboard_type = 'home home'
                         mopidy.set_volume_sys(state.default_volume)

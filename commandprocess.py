@@ -20,6 +20,9 @@ class CommandProcess:
                 self.bot.sendMessage(chat_id, 'Reboot asked')
             os.execv(self.state.config.path+'main.py',[''])
             return
+        elif '/refresh' in command:
+            self.state.refresh_dashboard()
+            return
             
             ''' Music player Controls'''
         if 'music' in self.state():
@@ -218,7 +221,7 @@ class CommandProcess:
                                 self.state.uri = False
                                 self.state('music menu')
                                 self.state.keyboard_type = 'music menu'
-                                self.alarm.set_config('ring_music',self.state.uri)
+                                self.state.alarm.set_config('ring_music',self.state.uri)
                                 self.state.set_reply_text('Nice choice!')
                             else:
                                 self.state.set_reply_text('Command not recognized')
@@ -350,7 +353,7 @@ class CommandProcess:
                     self.state.set_config_name = command
                     self.state('alarm change_config_edit')
                     self.state.keyboard_type = 'options list'
-                    self.state.options_list = self.alarm.config_options_list(command)
+                    self.state.options_list = self.state.alarm.config_options_list(command)
                     units = self.alarm.get_config_units(command)
                     self.state.set_reply_text(units)
                 elif 'config_view' in self.state():
@@ -364,7 +367,7 @@ class CommandProcess:
                         self.state('alarm change_config config_view')
                         self.state.keyboard_type = 'return'
                     else:
-                        result = self.alarm.set_config(self.state.set_config_name,command)
+                        result = self.state.alarm.set_config(self.state.set_config_name,command)
                         self.state.set_reply_text(result)
             else:
                 self.state.set_reply_text('Command process fail')

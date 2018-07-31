@@ -87,12 +87,16 @@ class CalendarCheck:
         for event in week_cal.walk("VEVENT"):
             start = event.get('dtstart')
             if start:
-                event_start = start.dt.replace(tzinfo=None)
-                event_start_local = event_start + utcoffset
-                days_to_go = event_start_local.weekday()-today_local.weekday()
-                if days_to_go<0:
-                    days_to_go += 7
-                events[days_to_go].append(event_start_local)
+                try:
+                    event_start = start.dt.replace(tzinfo=None)
+                    event_start_local = event_start + utcoffset
+                    days_to_go = event_start_local.weekday()-today_local.weekday()
+                    if days_to_go<0:
+                        days_to_go += 7
+                    events[days_to_go].append(event_start_local)
+                except Exception as error:
+                    print('WARNING: get_week_events_local_times event error')
+                    print(error)
         for day in events:
             day.sort()
         return events

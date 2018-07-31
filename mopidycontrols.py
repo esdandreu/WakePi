@@ -617,5 +617,5 @@ class MopidyControls:
             status.song_percentage = 0
             status.progress_s = 0
             status.duration_s = 0
-        print('INFO: get spotify playback')
+        print('INFO: got spotify playback')
         return status
