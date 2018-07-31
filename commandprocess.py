@@ -16,19 +16,10 @@ class CommandProcess:
     def command_process(self, command):
         ## Command processing (most hackable part)
         if '/reboot' in command:
-            print('INFO: Reebot asked')
-            for chat_id in self.state.chat_id_list:
-                self.bot.sendMessage(chat_id, 'Reboot asked')
-            os.execv(self.state.config.path+'main.py',[''])
+            self.reboot()
             return
         elif '/update' in command:
-            print('INFO: Update and reboot asked')
-            for chat_id in self.state.chat_id_list:
-                self.bot.sendMessage(chat_id, 'Update and reboot asked')
-            subprocess.check_output([cd,self.state.config.path])
-            subprocess.check_output([git,pull,origin,master])
-            print('INFO: Update completed')
-            os.execv(self.state.config.path+'main.py',[''])
+            self.update()
             return
         elif '/refresh' in command:
             self.state.refresh_dashboard()
@@ -70,14 +61,42 @@ class CommandProcess:
                 if 'menu' in command:
                     self.state.keyboard_type = 'home menu'
                 elif 'music' in command:
+                    self.state.options_list = False
+                    self.state.uri_list = False
                     self.state('music menu')
                     self.state.keyboard_type = 'music'
                 elif 'alarm' in command:
+                    self.state.options_list = False
+                    self.state.uri_list = False
                     self.state('alarm view')
                     self.state.keyboard_type = 'alarm menu'
                 elif 'configuration' in command:
+                    self.state.options_list = False
+                    self.state.uri_list = False
                     self.state('general_config view')
                     self.state.keyboard_type = 'return'
+                elif 'youtu.be' in command:
+                    '''If sending a link from youtube app'''
+                    self.state.options_list = False
+                    self.state.uri_list = False
+                    video_id = command.split('/')[-1]
+                    self.state.uri = ('yt:http://youtube.com/watch?v='
+                                      + video_id)
+                    print('INFO: '+self.state.uri)
+                    self.state('music search action')
+                    self.state.keyboard_type = 'action'
+                    self.state.set_reply_text('Youtube shared link')
+                elif 'youtube.com' in command:
+                    '''If sending a url'''
+                    self.state.options_list = False
+                    self.state.uri_list = False
+                    for element in command.split(' '):
+                        if 'http://' in element or 'https://' in element:
+                            self.state.uri = 'yt:' + element
+                    print('INFO: '+self.state.uri)
+                    self.state('music search action')
+                    self.state.keyboard_type = 'action'
+                    self.state.set_reply_text('Youtube url')
                     
                     '''Music'''
                 elif 'music menu' in self.state():
@@ -94,32 +113,15 @@ class CommandProcess:
                         self.state('music search type')
                         self.state.keyboard_type = 'search type'
                         self.state.set_reply_text('Search by')
-
-                        '''Youtube actions'''
                     elif 'youtube help' in command:
+                        end_of_command_refresh = False
                         with open('youtube_help.txt','r') as help_file:
                             help_text = help_file.read().replace('\n','')
                         for chat_id in self.state.chat_id_list:
                             self.bot.sendMessage(chat_id, help_text)
-                        return
-                    elif 'youtu.be' in command:
-                        '''If sending a link from youtube app'''
-                        video_id = command.split('/')[-1]
-                        self.state.uri = ('yt:http://youtube.com/watch?v='
-                                          + video_id)
-                        print('INFO: '+self.state.uri)
-                        self.state('music search action')
-                        self.state.keyboard_type = 'action'
-                        self.state.set_reply_text('Youtube shared link')
-                    elif 'youtube.com' in command:
-                        '''If sending a url'''
-                        for element in command.split(' '):
-                            if 'http://' in element or 'https://' in element:
-                                self.state.uri = 'yt:' + element
-                        print('INFO: '+self.state.uri)
-                        self.state('music search action')
-                        self.state.keyboard_type = 'action'
-                        self.state.set_reply_text('Youtube url')
+                    elif 'spotify device not found?' in command:
+                        end_of_command_refresh = False
+                        self.restart_raspotify()
                     else:
                         self.state.set_reply_text('Command not recognized')
                     
@@ -210,6 +212,8 @@ class CommandProcess:
                                     self.state.set_reply_text('Rock it!')
                                     self.state.uri = False
                                 else:
+                                    self.state.options_list = False
+                                    self.state.uri_list = False
                                     self.state.set_reply_text('Error loading')
                             elif 'albums' in command:
                                 [albums_list,uri_list] = self.state.mopidy.albums_spotify(
@@ -228,10 +232,10 @@ class CommandProcess:
                                 self.state.keyboard_type = 'options list'
                                 self.state.set_reply_text('Found this')
                             elif 'wake up music' in command:
-                                self.state.uri = False
                                 self.state('music menu')
                                 self.state.keyboard_type = 'music menu'
                                 self.state.alarm.set_config('ring_music',self.state.uri)
+                                self.state.uri = False
                                 self.state.set_reply_text('Nice choice!')
                             else:
                                 self.state.set_reply_text('Command not recognized')
@@ -503,3 +507,28 @@ class CommandProcess:
     def remove_unicode(self,string):
         '''Removes the unicode characters of a string'''
         return ''.join([x for x in string if ord(x) < 255])
+
+    def reboot(self):
+        print('INFO: Reebot asked')
+        for chat_id in self.state.chat_id_list:
+            self.bot.sendMessage(chat_id, 'Reboot asked')
+        os.execv(self.state.config.path+'main.py',[''])
+        return
+
+    def update(self):
+        print('INFO: Update and reboot asked')
+        for chat_id in self.state.chat_id_list:
+            self.bot.sendMessage(chat_id, 'Update and reboot asked')
+        subprocess.check_output(['cd',self.state.config.path])
+        subprocess.check_output(['git','pull','origin,master'])
+        print('INFO: Update completed')
+        os.execv(self.state.config.path+'main.py',[''])
+        return
+
+    def restart_raspotify(self):
+        print('INFO: Restart raspotify')
+        subprocess.check_output(['sudo','systemctl','restart','raspotify'])
+        for chat_id in self.state.chat_id_list:
+            self.bot.sendMessage(chat_id, 'Spotify device restarted\n'
+                                 +'Check internet connection if still fails')
+        return

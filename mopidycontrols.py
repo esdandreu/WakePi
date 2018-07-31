@@ -127,6 +127,7 @@ class MopidyControls:
             return False
     
     def load(self,name,name_type):
+        LOADING_STATUS_REFRESH_COUNTS = 3
         try:
             if 'playlist' in name_type or 'pl' in name_type:
                 output = subprocess.check_output(['mpc','load',name])
@@ -140,8 +141,12 @@ class MopidyControls:
                     if not tracks_list and not uri_list:
                         print('ERROR: mopidy load control error')
                         return False
-                    self.state.send_chat_action('upload_audio')
+                    uri_counts = LOADING_STATUS_REFRESH_COUNTS
                     for uri in uri_list:
+                        if uri_counts % LOADING_STATUS_REFRESH_COUNTS == 0:
+                            self.state.send_chat_action('upload_audio')
+                            uri_counts = 0
+                        uri_counts += 1
                         output = subprocess.check_output(['mpc','add',uri])
                     self.state.auto_refresh_enabled = auto_refresh_enabled
                 else:
@@ -156,8 +161,12 @@ class MopidyControls:
                             if not tracks_list and not uri_list:
                                 print('ERROR: mopidy load control error')
                                 return False
-                            self.state.send_chat_action('upload_audio')
+                            uri_counts = LOADING_STATUS_REFRESH_COUNTS
                             for uri in uri_list:
+                                if uri_counts % LOADING_STATUS_REFRESH_COUNTS == 0:
+                                    self.state.send_chat_action('upload_audio')
+                                    uri_counts = 0
+                                uri_counts += 1
                                 output = subprocess.check_output(['mpc','add',uri])
                             self.state.auto_refresh_enabled = auto_refresh_enabled
                         else:

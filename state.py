@@ -186,6 +186,7 @@ class State( object ):
                            [KeyboardButton(text=u'\U0001F3A7 \U0001F4DD'+'playlists')],
                            [KeyboardButton(text=u'\U0001F50E'+'search')],
                            [KeyboardButton(text=u'\U0001F534'+'youtube help')],
+                           [KeyboardButton(text=u'\U0001F4FB'+'spotify device not found?')],
                            [KeyboardButton(text=u'\U0001F519'+'/return')],
                            ],
                             resize_keyboard = True,
