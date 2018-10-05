@@ -7,6 +7,9 @@ from mopidycontrols import MopidyControls
 from calendarcheck import CalendarCheck
 from configcontrols import ConfigControls
 from collections import namedtuple
+import sys
+import logging
+logger = logging.getLogger('WakePi')
 
 class AlarmControls:
     def __init__(self,state):
@@ -26,7 +29,7 @@ class AlarmControls:
         self.state.mopidy.repeat('on')
         self.state.mopidy.random('on')
         if not self.state.mopidy.load(self.c.ring_music,'uri'):
-            print('WARNING: local file loaded for ringing')
+            logger.warning('Local file loaded for ringing')
             self.state.mopidy.load_local_song()
         self.state.mopidy.shuffle()
         self.state.mopidy.play()
@@ -50,8 +53,6 @@ class AlarmControls:
         else:
             volume = int(self.c.max_ringing_volume)
         volume = min(volume,int(self.c.max_ringing_volume))
-        print(volume)
-        print(ringing_time)
         self.state.mopidy.set_volume_sys(volume)
     
     def get_alarms(self):
@@ -79,7 +80,7 @@ class AlarmControls:
             return config_list
         except:
             # Put here the default control values
-            print('ERROR: Bad Alarm Controls config default config applied')
+            logger.error("Bad AlarmControls config, default config applied: {}".format(sys._getframe(  ).f_code.co_name))
             return config_list(10,30,70,14,35,30,60,10,6,10,"I am awake",
                                'spotify:user:2155eprgg73n7x46ybpzpycra:playlist:64xSAgfPBl8HjIKJBi3CIi')
 
@@ -226,7 +227,7 @@ class AlarmControls:
             alarm_time = datetime.datetime.strptime(alarm_time,'%c')
             return [alarm_type, alarm_time]
         else:
-            print('Bad alarm format in alarm_clock_info!')
+            logging.error("Bad alarm format: {} ".format(sys._getframe(  ).f_code.co_name))
             return [False, False]
 
     def alarm_time2str(self,alarm_type,alarm_time):
@@ -385,7 +386,7 @@ class AlarmControls:
                         and (now-alarm_time).total_seconds() <= 20*60):
                         alarm_type[1] = 'disabled'
                         success = True
-                        print('INFO: alarm disabled')
+                        logger.info('Alarm disabled')
                 elif 'snooze' in action:
                     if ((alarm_time-now).total_seconds() <= 60
                         and (now-alarm_time).total_seconds() <= 20*60):
@@ -414,7 +415,7 @@ class AlarmControls:
                         alarm_type[1] = 'disabled'
                 elif 'change' in action:
                     if change_time is None:
-                        print('ERROR: Bad imput')
+                        logger.error("Bad imput: {}".format(sys._getframe(  ).f_code.co_name))
                         success = False
                         return success
                     else:

@@ -12,6 +12,7 @@ redirect_uri = https://www.google.com/
 
 [Calendar]
 https://calendar.google.com/calendar/ical/esdandreu@gmail.com/private-c5d9b7f8b67b4d601260581b42dd60c7/basic.ics
+https://calendar.google.com/calendar/ical/tpa2m5hi1bn9qrtdbfm4d3ijt4%40group.calendar.google.com/private-d3433aad644066e68953a72ad1beabaa/basic.ics
 
 [Default Controls]
 volume = 65

@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
+import os
 
 class ConfigControls( object ):
     def __init__(self):
-        self.path = '/home/pi/WakePi/'
+        # self.path = '/home/pi/WakePi/'
+        self.path = os.path.dirname(os.path.abspath(__file__))+'\\'
         
     def get_section(self,section,return_other_text=False):
         '''Returns the section from the config file'''
