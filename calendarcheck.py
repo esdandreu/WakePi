@@ -5,6 +5,7 @@ import requests
 import json
 from icalendar import Calendar, Event
 from configcontrols import ConfigControls
+from operator import attrgetter
 import sys
 import logging
 logger = logging.getLogger('WakePi')
@@ -170,9 +171,10 @@ class CalendarCheck:
                     except Exception as error:
                         logger.error(" {}: not rrule\n{}".format(
                             sys._getframe(  ).f_code.co_name,error))
-        for day in events:
-            day.sort()
-        return events
+        sorted_events = [[],[],[],[],[],[],[]]
+        for weekday, day in enumerate(events):
+            sorted_events[weekday] = sorted(day)
+        return sorted_events
 
     def get_day_first_events_localtime(self,week_events):
         '''Gets a list with the first events of each weekday

@@ -455,9 +455,10 @@ class AlarmControls:
                 and (alarm_time.date()-today.date() < datetime.timedelta(7))):
                 weekday = alarm_time.weekday()
                 week_alarms[weekday].append([alarm_type,alarm_time.time()])
-        for day in week_alarms:
-            day.sort()
-        week_alarms = numpy.roll(week_alarms,-today.weekday()).tolist()
+        sorted_alarms = [[],[],[],[],[],[],[]]
+        for weekday, day in enumerate(week_alarms):
+            sorted_alarms[weekday] = sorted(day)
+        week_alarms = numpy.roll(sorted_alarms,-today.weekday()).tolist()
         return week_alarms
 
     def build_msg_text_from_alarms(self):
