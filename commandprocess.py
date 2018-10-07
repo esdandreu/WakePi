@@ -6,6 +6,9 @@ import datetime
 import subprocess
 from alarmcontrols import AlarmControls
 from mopidycontrols import MopidyControls
+import sys
+import logging
+logger = logging.getLogger('WakePi')
 
 class CommandProcess:
     def __init__(self, state, bot):
@@ -82,7 +85,7 @@ class CommandProcess:
                     video_id = command.split('/')[-1]
                     self.state.uri = ('yt:http://youtube.com/watch?v='
                                       + video_id)
-                    print('INFO: '+self.state.uri)
+                    logger.info(''+self.state.uri)
                     self.state('music search action')
                     self.state.keyboard_type = 'action'
                     self.state.set_reply_text('Youtube shared link')
@@ -93,7 +96,7 @@ class CommandProcess:
                     for element in command.split(' '):
                         if 'http://' in element or 'https://' in element:
                             self.state.uri = 'yt:' + element
-                    print('INFO: '+self.state.uri)
+                    logger.info(''+self.state.uri)
                     self.state('music search action')
                     self.state.keyboard_type = 'action'
                     self.state.set_reply_text('Youtube url')
@@ -131,7 +134,7 @@ class CommandProcess:
                             self.state('music menu')
                             self.state.keyboard_type = 'music'
                         else:
-                            print('INFO: search by', self.remove_unicode(command))
+                            logger.info('search by', self.remove_unicode(command))
                             self.state.search_type = (self.remove_unicode(command)).strip(' ')
                             self.state('music search query')
                             self.state.keyboard_type = 'nothing'
@@ -142,7 +145,7 @@ class CommandProcess:
                             self.state.keyboard_type = 'search type'
                             self.state.set_reply_text('Search by')
                         else:
-                            print('INFO: search:', self.remove_unicode(command))
+                            logger.info('search:', self.remove_unicode(command))
                             for chat_id in self.state.chat_id_list:
                                 self.bot.sendChatAction(chat_id,'typing')
                             self.state.search_query = (self.remove_unicode(command)).strip(' ')
@@ -162,7 +165,7 @@ class CommandProcess:
                                 self.state.keyboard_type = 'music menu'
                                 self.state.set_reply_text('Error')
                     elif 'results' in self.state():
-                        print('INFO: selection:', self.remove_unicode(command))
+                        logger.info('selection:', self.remove_unicode(command))
                         if '/return' in command:
                             if self.state.uri:
                                 self.state.options_list = False
@@ -176,7 +179,7 @@ class CommandProcess:
                         else:
                             self.state.uri = self.selection_process(command)
                             if not self.state.uri:
-                                print('WARNING: Selection not in the list')
+                                logger.error('Selection not in the list')
                                 self.state.set_reply_text('Selection not in the list')
                             else:
                                 self.state('music search action')
@@ -191,7 +194,7 @@ class CommandProcess:
                                 self.state('music menu')
                                 self.state.keyboard_type = 'music'
                         else:
-                            print('INFO: search action:', self.remove_unicode(command))
+                            logger.info('search action:', self.remove_unicode(command))
                             if (('add' in command) or ('play' in command)
                                                    or ('shuffle' in command)):
                                 self.state('music menu')
@@ -256,7 +259,7 @@ class CommandProcess:
                         self.state.set_alarm_day = int(split_command[1])
                         self.state('alarm set on_day')
                         self.state.keyboard_type = 'alarm set on_day'
-                        print('INFO: set_alarm')
+                        logger.info('set_alarm')
                     else:
                         self.state.set_reply_text('Write the time in "HH:MM"')
                 elif 'temporizer' in command:
@@ -509,23 +512,24 @@ class CommandProcess:
         return ''.join([x for x in string if ord(x) < 255])
 
     def reboot(self):
-        print('INFO: Reebot asked')
+        logger.info('Reebot asked')
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Reboot asked')
         os.execv(self.state.config.path+'main.py',[''])
         return
 
     def update(self):
-        print('INFO: Update and reboot asked')
+        logger.info('Update and reboot asked')
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Update and reboot asked')
-        subprocess.check_output(['git','pull','origin','master'])
-        print('INFO: Update completed')
+        subprocess.check_output(['cd',self.state.config.path])
+        subprocess.check_output(['git','pull','origin,master'])
+        logger.info('Update completed')
         os.execv(self.state.config.path+'main.py',[''])
         return
 
     def restart_raspotify(self):
-        print('INFO: Restart raspotify')
+        logger.info('Restart raspotify')
         subprocess.check_output(['sudo','systemctl','restart','raspotify'])
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Spotify device restarted\n'

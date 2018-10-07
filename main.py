@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import unicode_literals
 
-__version__ = '1.6'
+__version__ = '1.7'
 __author__ = 'Andreu Gimenez Bolinches'
 
 import sys
@@ -12,6 +12,7 @@ import datetime
 import threading
 import subprocess
 import traceback
+import logging
 from telepot.loop import MessageLoop
 from commandprocess import CommandProcess
 from mopidycontrols import MopidyControls
@@ -26,7 +27,7 @@ BOOT_INITIALIZATION = False # Activate this for final release to get mopidy
 def on_chat_message(msg):
     '''Executed when receiven a message'''
     content_type, chat_type, chat_id = telepot.glance(msg)
-    print('INFO:',content_type,chat_type,chat_id)
+    logger.info(content_type+chat_type+chat_id)
     command = msg['text']
     is_valid = state.chat_ids(chat_id,command)
     if is_valid:
@@ -35,14 +36,14 @@ def on_chat_message(msg):
 def on_callback_query(msg):
     '''Executed when pressing a Telegram button'''
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
-    print('INFO: Callback Query:', query_id, from_id, query_data)
+    logger.info('Callback Query:' + query_id + from_id + query_data)
     command = query_data
     cp.command_process(command)
     #bot.answerCallbackQuery(query_id, text='Got it')
 
 def time_check(state):
     '''Loop checking time periodically'''
-    print('INFO: '+datetime.datetime.utcnow().strftime('%c'))
+    logger.info(datetime.datetime.utcnow().strftime('%c'))
     last_calendar_check = datetime.datetime.utcnow()
     PERIOD_CALENDAR_CHECK = 5*60 # [seconds]
     last_refresh_token_check = datetime.datetime.utcnow()
@@ -87,15 +88,14 @@ def time_check(state):
                         state.auto_refresh = True
                         state.refresh_dashboard()
         except Exception as error:
-            print('ERROR: time check error')
+            logger.error('Time check error: %s',error)
             traceback.print_tb(error.__traceback__)
-            print(error)
 
 def get_bot_token():
     '''Returns the bot token from the config file'''
     token = config.get_section('Bot Token')
     if len(token) > 1:
-        print('WARNING: Only first bot token is accepted')
+        logger.warning('Only first bot token is accepted')
     return token[0]
 
 def init_mopidy():
@@ -110,18 +110,32 @@ def init_mopidy():
         try:
             subprocess.check_output(['sudo','pkill','mopidy'])
         except subprocess.CalledProcessError as e:
-            print('ERROR: error killing')
+            logger.error('Error killing')
     subprocess.check_output(['mopidy']) # while mopidy is active this blocks code
-    print('INFO: mopidy reboot')
+    logger.info('Mopidy reboot')
 
-'''Initialization process'''
-print('INFO: Start initialization')
+'''Initialize logger'''
+now = datetime.datetime.utcnow()
+file_log = now.strftime('%d_%m_%y %H_%M')+'.log'
+logger = logging.getLogger('WakePi')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler(file_log)
+fh.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('[%(levelname)7s] %(asctime)s: %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+logger.addHandler(fh)
+logger.addHandler(ch)
+logger.info('Start initialization')
+'''Initialize modules'''
 config = ConfigControls()
 bot = telepot.Bot(get_bot_token())
 state = State(bot)
 cp = CommandProcess(state,bot)
 mopidy = MopidyControls(state)
-print('INFO: spotipy version '+mopidy.spotipy_VERSION)
+logger.info('Spotipy version '+mopidy.spotipy_VERSION)
 cal_check = CalendarCheck(state)
 alarm = AlarmControls(state)
 MessageLoop(bot, {'chat': on_chat_message,
@@ -143,12 +157,10 @@ if __name__ == "__main__":
             initMopidy = threading.Thread(target = init_mopidy)
             initMopidy.setDaemon(True)
             initMopidy.start()
-        print('\nINFO: Initialization completed\n')
+        logger.info('Initialization completed')
     except:
-        print('ERROR: unable to start thread')
+        logger.error('Unable to start thread')
 
 # Necessary for release version with reboot mode
 while True:
     pass
-        
-        

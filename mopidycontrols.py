@@ -1,12 +1,14 @@
 from __future__ import unicode_literals
 
-import sys
 import os
 import subprocess
 import spotipy
 import spotipy.util as util
 from configcontrols import ConfigControls
 from collections import namedtuple
+import sys
+import logging
+logger = logging.getLogger('WakePi')
 
 class MopidyControls:
     def __init__(self,state):
@@ -37,7 +39,7 @@ class MopidyControls:
                                            client_secret=my_client_secret,
                                            redirect_uri = my_redirect_uri)
         self.spotify = spotipy.Spotify(auth=self.token)
-        print('INFO: Spotify token refreshed')
+        logger.info('Spotify token refreshed')
         return self.token
         
     def play(self, playlist=None):
@@ -50,7 +52,7 @@ class MopidyControls:
                     output = subprocess.check_output(['mpc','play',playlist])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -58,7 +60,7 @@ class MopidyControls:
                     self.spotify.start_playback()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def pause(self):
@@ -68,7 +70,7 @@ class MopidyControls:
                 output = subprocess.check_output(['mpc','pause'])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -76,7 +78,7 @@ class MopidyControls:
                     self.spotify.pause_playback()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def toggle(self):
@@ -86,7 +88,7 @@ class MopidyControls:
                 output = subprocess.check_output(['mpc','toggle'])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -96,7 +98,7 @@ class MopidyControls:
                     self.spotify.start_playback()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
     
     def list_playlist(self):
@@ -105,7 +107,7 @@ class MopidyControls:
             output = subprocess.check_output(['mpc','lsplaylist'])
             return output.decode('utf-8')
         except:
-            print('ERROR: mopidy control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return False
 
     def search(self,query,type_):
@@ -114,7 +116,7 @@ class MopidyControls:
             output = subprocess.check_output(['mpc','search',type_,query])
             return output.decode('utf-8')
         except:
-            print('ERROR: mopidy control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return False
 
     def mopidy_status(self):
@@ -123,7 +125,7 @@ class MopidyControls:
             output = subprocess.check_output(['mpc'])
             return output.decode('utf-8')
         except:
-            print('ERROR: mopidy control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return False
     
     def load(self,name,name_type):
@@ -132,14 +134,14 @@ class MopidyControls:
             if 'playlist' in name_type or 'pl' in name_type:
                 output = subprocess.check_output(['mpc','load',name])
             elif 'uri' in name_type:
-                print(''.join(['INFO: load: ',name]))
+                logger.info('load: '+name)
                 auto_refresh_enabled = self.state.auto_refresh_enabled
                 if 'spotify:user:spotify' in name: #Solves the error adding playlists created by spotify
                     while self.state.auto_refresh_enabled:
                         self.state.auto_refresh_enabled = False
                     [tracks_list,uri_list] = self.tracks_spotify(name)
                     if not tracks_list and not uri_list:
-                        print('ERROR: mopidy load control error')
+                        logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                         return False
                     uri_counts = LOADING_STATUS_REFRESH_COUNTS
                     for uri in uri_list:
@@ -154,12 +156,12 @@ class MopidyControls:
                         output = subprocess.check_output(['mpc','add',name])
                     except:
                         if not 'youtube.com' in name:
-                            print('WARNING: alternative loading')
+                            logger.warning('Alternative loading')
                             while self.state.auto_refresh_enabled:
                                 self.state.auto_refresh_enabled = False
                             [tracks_list,uri_list] = self.tracks_spotify(name)
                             if not tracks_list and not uri_list:
-                                print('ERROR: mopidy load control error')
+                                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                                 return False
                             uri_counts = LOADING_STATUS_REFRESH_COUNTS
                             for uri in uri_list:
@@ -170,17 +172,16 @@ class MopidyControls:
                                 output = subprocess.check_output(['mpc','add',uri])
                             self.state.auto_refresh_enabled = auto_refresh_enabled
                         else:
-                            print('ERROR: mopidy load control error')
+                            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                             return False
             else:
-                print("ERROR: Bad input")
+                logger.error("Mopidy control error: Bad input {}".format(sys._getframe(  ).f_code.co_name))
                 output = ''
                 return False
-            print('INFO: load success')
+            logger.info('Load success')
             return True
         except Exception as error:
-            print('ERROR: mopidy load control error')
-            print(error)
+            logger.error(('Mopidy control error {} \n'+error).format(sys._getframe(  ).f_code.co_name))
             while not self.state.auto_refresh_enabled:
                 self.state.auto_refresh_enabled = True
             return False
@@ -197,7 +198,7 @@ class MopidyControls:
                 output = subprocess.check_output(['mpc','clear'])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -205,7 +206,7 @@ class MopidyControls:
                     self.spotify.pause_playback()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def random(self,mode=None):
@@ -218,7 +219,7 @@ class MopidyControls:
                     output = subprocess.check_output(['mpc','random',mode])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -228,7 +229,7 @@ class MopidyControls:
                     self.spotify.shuffle(True)
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def repeat(self,mode=None):
@@ -241,7 +242,7 @@ class MopidyControls:
                     output = subprocess.check_output(['mpc','repeat',mode])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -251,7 +252,7 @@ class MopidyControls:
                     self.spotify.repeat('context')
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def next(self):
@@ -261,14 +262,14 @@ class MopidyControls:
                 output = subprocess.check_output(['mpc','next'])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
                 self.spotify.next_track()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def prev(self):
@@ -284,14 +285,14 @@ class MopidyControls:
                     output = subprocess.check_output(['mpc','cdprev'])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
                 self.spotify.previous_track()
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def seek(self,increment):
@@ -305,7 +306,7 @@ class MopidyControls:
                 output = subprocess.check_output(['mpc','seek',song_percentage])
                 return False
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
         else:
             try:
@@ -313,7 +314,7 @@ class MopidyControls:
                 self.spotify.seek_track(position_ms)
                 return True
             except:
-                print('ERROR: mopidy control error')
+                logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
                 return False
 
     def volume_mopidy(self,volume,increase = None):
@@ -330,7 +331,7 @@ class MopidyControls:
             output = subprocess.check_output(['mpc','volume',volume_change])
             return output.decode('utf-8')
         except:
-            print('ERROR: mopidy control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return False
 
     def volume_sys(self,volume_change):
@@ -364,7 +365,7 @@ class MopidyControls:
             output = subprocess.check_output(['mpc','shuffle'])
             return True
         except:
-            print('ERROR: mopidy control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return False
 
     #This function only works with spotify
@@ -406,7 +407,7 @@ class MopidyControls:
                     search_list.append(info_text)
             return [search_list,uri_list]
         except:
-            print('ERROR: mopidy search spotify control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return [False, False]
     
     #This function only works with spotify
@@ -426,7 +427,7 @@ class MopidyControls:
                 playlist_list.append(info_text)
             return [playlist_list,uri_list]
         except:
-            print('ERROR: mopidy list playlist spotify control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return [False, False]
     
     #This function only works with spotify         
@@ -469,7 +470,7 @@ class MopidyControls:
                     uri_list.append(track['uri'])
             return [tracks_list,uri_list]
         except:
-            print('ERROR: mopidy tracks spotify control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return [False, False]
 
     def albums_spotify(self,uri):
@@ -488,10 +489,10 @@ class MopidyControls:
                     album_list.append(info_text)
                     uri_list.append(album['uri'])
             else:
-                print('ERROR: Cannot search albums of a non artist uri')
+                logger.error('Cannot search albums of a non artist uri')
             return [album_list,uri_list]
         except:
-            print('ERROR: mopidy albums spotify control error')
+            logger.error("Mopidy control error: {}".format(sys._getframe(  ).f_code.co_name))
             return [False, False]
 
     def get_status(self):
@@ -578,7 +579,7 @@ class MopidyControls:
     def get_status_spotify(self,status):
         '''Returns the status of the spotify playback, called when the mopidy
            status is empty'''
-        print('INFO: getting spotify playback')
+        logger.info('Getting spotify playback')
         try:
             status_full = self.spotify.current_playback()
         except:
@@ -626,5 +627,5 @@ class MopidyControls:
             status.song_percentage = 0
             status.progress_s = 0
             status.duration_s = 0
-        print('INFO: got spotify playback')
+        logger.info('Got spotify playback')
         return status

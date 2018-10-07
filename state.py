@@ -13,6 +13,9 @@ from calendarcheck import CalendarCheck
 from asciifont import AsciiFont
 from configcontrols import ConfigControls
 from collections import namedtuple
+import sys
+import logging
+logger = logging.getLogger('WakePi')
 
 class State( object ):
     def __init__(self, bot):
@@ -57,13 +60,13 @@ class State( object ):
             return self.state
         else:
             self.state = state
-            print('INFO: state changed to', state)
+            logger.info('State changed to ' + state)
     
     def get_password(self):
         '''Returns the password from the config file'''
         password = self.config.get_section('Password')
         if len(password) > 1:
-            print('WARNING: Only first chat password is accepted')
+            logger.warning('Only first chat password is accepted')
         return password[0].strip(' ')
 
     def get_default_control(self,control):
@@ -212,7 +215,7 @@ class State( object ):
                                                resize_keyboard = False,
                                                )
             else:
-                print('WARNING: options_list is empty')
+                logger.warning('Options_list is empty')
                 keyboard = ReplyKeyboardMarkup(keyboard=[
                            [KeyboardButton(text=u'\U0001F519'+'/return')],
                            ],
@@ -334,12 +337,11 @@ class State( object ):
                     self.set_reply_text('')
                     self.store_dash_msg(chat_count,telepot.message_identifier(dash_msg_id))
                     self.store_reply_msg(chat_count,telepot.message_identifier(reply_msg_id))
-                    print('INFO: Refresh')
+                    logger.info('Refresh')
                     break
                 except Exception as error:
                     tries = tries + 1
-                    print('ERROR: could not refresh')
-                    print(error)
+                    logger.error("Could not refresh: {}\n {}".format(sys._getframe(  ).f_code.co_name,error))
             chat_count += 1
         return
     
@@ -443,13 +445,12 @@ class State( object ):
             try:
                 subprocess.check_output(['mpc','idle'])
                 if self.auto_refresh_enabled:
-                    print('INFO: auto')
+                    logger.info('Auto')
                     self.refresh_dashboard()
                 else:
-                    print('INFO: auto not enabled')
+                    logger.info('Auto not enabled')
             except Exception as error:
-                print('WARNING: Mopidy not enabled')
-                print(error)
+                logger.warning('Mopidy not enabled \n'+error)
                 self.send_chat_action('upload_audio')
                 sleep(2)# HUGE BLOCK
         
@@ -476,8 +477,8 @@ class State( object ):
                             self.chat_id_list.remove(new_chat_id)
                             self.bot.sendMessage(new_chat_id,
                                                  'Goodbye')
-                            print('INFO: Allowed chat ids:')
-                            print(self.chat_id_list)
+                            logger.info('Allowed chat ids:')
+                            logger.debug(self.chat_id_list)
                             return False
                         else:
                             is_new = False
@@ -486,8 +487,8 @@ class State( object ):
             if is_new:
                 if self.chat_password in command:
                     self.chat_id_list.append(new_chat_id)
-                    print('INFO: Allowed chat ids:')
-                    print(self.chat_id_list)
+                    logger.info('Allowed chat ids:')
+                    logger.debug(self.chat_id_list)
                     self.set_reply_text('Welcome')
                     self.refresh_dashboard()
                 else:
@@ -512,7 +513,7 @@ class State( object ):
             else:
                 self.last_dash_msg.append(msg)
         else:
-            print('ERROR: store last msg')
+            logger.error("Store last msg: {}".format(sys._getframe(  ).f_code.co_name))
             return False
 
     def store_reply_msg(self,chat_count,msg=None):
@@ -530,7 +531,7 @@ class State( object ):
             else:
                 self.last_reply_msg.append(msg)
         else:
-            print('ERROR: store last msg')
+            logger.error("Store last msg: {}".format(sys._getframe(  ).f_code.co_name))
             return False
                 
     def delete_last_msg(self,bot,chat_count):
@@ -539,4 +540,4 @@ class State( object ):
             bot.deleteMessage(self.last_dash_msg[chat_count])
             bot.deleteMessage(self.last_reply_msg[chat_count])
         except Exception:
-            print('WARNING: First msg?')
+            logger.warning('First msg?')
