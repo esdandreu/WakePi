@@ -27,7 +27,7 @@ BOOT_INITIALIZATION = False # Activate this for final release to get mopidy
 def on_chat_message(msg):
     '''Executed when receiven a message'''
     content_type, chat_type, chat_id = telepot.glance(msg)
-    logger.info(content_type+chat_type+chat_id)
+    logger.debug(str(content_type)+' '+str(chat_type)+' '+str(chat_id))
     command = msg['text']
     is_valid = state.chat_ids(chat_id,command)
     if is_valid:
@@ -36,7 +36,7 @@ def on_chat_message(msg):
 def on_callback_query(msg):
     '''Executed when pressing a Telegram button'''
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
-    logger.info('Callback Query:' + query_id + from_id + query_data)
+    logger.debug('Callback Query: '+str(query_id)+' '+str(from_id)+' '+query_data)
     command = query_data
     cp.command_process(command)
     #bot.answerCallbackQuery(query_id, text='Got it')

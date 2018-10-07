@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import pickle
 import numpy
+import os
 from mopidycontrols import MopidyControls
 from calendarcheck import CalendarCheck
 from configcontrols import ConfigControls
@@ -57,7 +58,7 @@ class AlarmControls:
     
     def get_alarms(self):
         '''Gets the alarm string array from the saved file'''
-        file = open(self.config.path+"saved_alarms.py","rb")
+        file = open(os.path.join(self.config.path,"saved_alarms.py"),"rb")
         alarms = pickle.load(file)
         file.close()
         return alarms
@@ -99,7 +100,7 @@ class AlarmControls:
     
     def set_alarms(self,alarms):
         '''Saves the alarm string array to the file'''
-        file = open(self.config.path+"saved_alarms.py","wb")
+        file = open(os.path.join(self.config.path,"saved_alarms.py"),"wb")
         pickle.dump(alarms,file)
         file.close()
         return
