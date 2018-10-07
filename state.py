@@ -227,7 +227,7 @@ class State( object ):
                 if 'artist' in self.uri:
                     action_list.append(u'\U0001F3B6 \U0001F4BF'+'albums')
                 if 'playlist' in self.uri:
-                    action_list.append(u'\U0001F634'+'wake up music'+u'\U0001F918')
+                    action_list.append(u'\U0001F634'+'wake up sound'+u'\U0001F918')
                 keyboard_buttons_list = []
                 for option in action_list:
                     keyboard_buttons_list.append(

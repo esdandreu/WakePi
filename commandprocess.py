@@ -231,7 +231,7 @@ class CommandProcess:
                                 self.state('music search results')
                                 self.state.keyboard_type = 'options list'
                                 self.state.set_reply_text('Found this')
-                            elif 'wake up music' in command:
+                            elif 'wake up sound' in command:
                                 self.state('music menu')
                                 self.state.keyboard_type = 'music menu'
                                 self.state.alarm.set_config('ring_music',self.state.uri)
@@ -519,8 +519,7 @@ class CommandProcess:
         print('INFO: Update and reboot asked')
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Update and reboot asked')
-        subprocess.check_output(['cd',self.state.config.path])
-        subprocess.check_output(['git','pull','origin,master'])
+        subprocess.check_output(['git','pull','origin','master'])
         print('INFO: Update completed')
         os.execv(self.state.config.path+'main.py',[''])
         return
