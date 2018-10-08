@@ -83,7 +83,6 @@ class CalendarCheck:
                                     # Only weekly repeated events are supported
                                     if 'WEEKLY' in rrule.get('freq')[0]:
                                         WEEK_EVENT = True
-                                        logger.debug(date)
                             except Exception as error:
                                 logger.error(("{} rrule\n" + error).format(sys._getframe(  ).f_code.co_name))
                         if WEEK_EVENT:

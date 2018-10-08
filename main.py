@@ -141,8 +141,8 @@ alarm = AlarmControls(state)
 MessageLoop(bot, {'chat': on_chat_message,
                   'callback_query': on_callback_query}
             ).run_as_thread()
-#self.week_events = self.cal_check.get_week_events_local_times()
-#alarm.set_auto_alarms(state.week_events)
+state.week_events = state.cal_check.get_week_events_local_times()
+alarm.set_auto_alarms(state.week_events)
 '''Parallel process'''
 if __name__ == "__main__":
     try:
