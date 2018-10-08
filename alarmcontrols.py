@@ -360,11 +360,9 @@ class AlarmControls:
         min_time_to_ring = 24*60*60
         for alarm in alarms:
             [alarm_type, alarm_time] = self.alarm_str2time(alarm)
-            print(alarm)
             ''' Check only enabled alarms '''
             if 'enabled' in alarm_type[1]:
                 time_to_ring = (alarm_time-now).total_seconds()
-                print(time_to_ring)
                 if (time_to_ring <= self.RING_TIME_THRESHOLD
                     and (now-alarm_time).total_seconds() <= 20*60):                     
                     self.ring()
