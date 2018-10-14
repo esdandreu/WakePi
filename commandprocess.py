@@ -532,6 +532,8 @@ class CommandProcess:
                     self.bot.sendMessage(chat_id, 'Already up-to-date')
             else:
                 logger.info('Update completed')
+                for chat_id in self.state.chat_id_list:
+                    self.bot.sendMessage(chat_id, 'Type the correct password')
                 os.execv(self.state.config.path+'main.py',[''])
         except Exception as update_error:
             logger.error('Update error')
