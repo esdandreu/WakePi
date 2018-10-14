@@ -31,7 +31,11 @@ def on_chat_message(msg):
     command = msg['text']
     is_valid = state.chat_ids(chat_id,command)
     if is_valid:
-        cp.command_process(command)
+        if '/version' in command:
+            for chat_id in state.chat_id_list:
+                    bot.sendMessage(chat_id, __version__)    
+        else:
+            cp.command_process(command)
 
 def on_callback_query(msg):
     '''Executed when pressing a Telegram button'''
