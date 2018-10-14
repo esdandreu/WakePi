@@ -248,6 +248,7 @@ class State( object ):
             keyboard = ReplyKeyboardMarkup(keyboard=[
                            [KeyboardButton(text=u'\U000023F1'+'set_alarm')],
                            [KeyboardButton(text=u'\U000023F3'+'temporizer')],
+                           [KeyboardButton(text=u'\U0001F501'+'refresh auto alarms')],
                            [KeyboardButton(text=u'\U0001F519'+'/return')],
                            ],
                             resize_keyboard = True,

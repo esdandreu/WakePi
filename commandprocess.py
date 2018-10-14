@@ -267,6 +267,11 @@ class CommandProcess:
                     self.state.keyboard_type = 'options list'
                     self.state.options_list = self.alarm.temporizer_options_list()
                     self.state.set_reply_text('How many minutes?')
+                elif 'refresh auto alarms' in command:
+                    self.state.send_chat_action('typing')
+                    self.state.week_events = self.state.cal_check.get_week_events_local_times()
+                    self.state.send_chat_action('typing')
+                    self.alarm.set_auto_alarms(self.state.week_events)
                 elif 'change_config' in command:
                     self.state('alarm change_config config_view')
                     self.state.keyboard_type = 'return'
@@ -512,7 +517,7 @@ class CommandProcess:
         return ''.join([x for x in string if ord(x) < 255])
 
     def reboot(self):
-        logger.info('Reebot asked')
+        logger.info('Reebot...')
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Reboot asked')
             self.bot.sendMessage(chat_id, 'Type the correct password')
@@ -520,7 +525,7 @@ class CommandProcess:
         return
 
     def update(self):
-        logger.info('Update and reboot asked')
+        logger.info('Update...')
         try:
             for chat_id in self.state.chat_id_list:
                 self.bot.sendMessage(chat_id, 'Update and reboot asked')
