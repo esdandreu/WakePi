@@ -515,7 +515,8 @@ class CommandProcess:
         logger.info('Reebot asked')
         for chat_id in self.state.chat_id_list:
             self.bot.sendMessage(chat_id, 'Reboot asked')
-        os.execv(self.state.config.path+'main.py',[''])
+            self.bot.sendMessage(chat_id, 'Type the correct password')
+        os.execv(self.state.config.path+'/main.py',[''])
         return
 
     def update(self):
@@ -532,9 +533,7 @@ class CommandProcess:
                     self.bot.sendMessage(chat_id, 'Already up-to-date')
             else:
                 logger.info('Update completed')
-                for chat_id in self.state.chat_id_list:
-                    self.bot.sendMessage(chat_id, 'Type the correct password')
-                os.execv(self.state.config.path+'main.py',[''])
+                self.reboot()
         except Exception as update_error:
             logger.error('Update error')
             logger.error(update_error)
