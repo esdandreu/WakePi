@@ -363,12 +363,13 @@ class AlarmControls:
             ''' Check only enabled alarms '''
             if 'enabled' in alarm_type[1]:
                 time_to_ring = (alarm_time-now).total_seconds()
-                if time_to_ring<0:
-                    time_to_ring = 24*60*60
-                min_time_to_ring = min(min_time_to_ring,time_to_ring)
-                if time_to_ring <= self.RING_TIME_THRESHOLD:
+                if (time_to_ring <= self.RING_TIME_THRESHOLD
+                    and (now-alarm_time).total_seconds() <= 20*60):                     
                     self.ring()
                     return 0
+                if time_to_ring<0:
+                    time_to_ring = min_time_to_ring
+                min_time_to_ring = min(min_time_to_ring,time_to_ring)
         return min_time_to_ring
 
     def edit_closest_alarm(self,action):
@@ -458,7 +459,7 @@ class AlarmControls:
                 week_alarms[weekday].append([alarm_type,alarm_time.time()])
         sorted_alarms = [[],[],[],[],[],[],[]]
         for weekday, day in enumerate(week_alarms):
-            sorted_alarms[weekday] = sorted(day)
+            sorted_alarms[weekday] = sorted(day,key=lambda day: day[1])
         week_alarms = numpy.roll(sorted_alarms,-today.weekday()).tolist()
         return week_alarms
 
