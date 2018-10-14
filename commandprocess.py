@@ -393,7 +393,7 @@ class CommandProcess:
         elif 'ringing' in self.state() or 'snooze' in self.state():
             end_of_command_refresh = True
             self.state.auto_refresh_enable = False
-            if self.alarm.c.alarm_stop_password in command:
+            if self.state.alarm.c.alarm_stop_password in command:
                 self.state.snooze_counts = 0
                 if not self.alarm.edit_closest_alarm('disable'):
                     self.state.set_reply_text('Alarm not disabled')
@@ -419,7 +419,7 @@ class CommandProcess:
                 if '/time' in command:
                     self.state.set_reply_text('Time to wake up!')
                 else:
-                    self.state.set_reply_text('Type:'+self.alarm.c.alarm_stop_password,
+                    self.state.set_reply_text('Type:'+self.state.alarm.c.alarm_stop_password,
                                               dash_join=False)
 
             '''General Configuration'''
