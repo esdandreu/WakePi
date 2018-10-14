@@ -520,12 +520,22 @@ class CommandProcess:
 
     def update(self):
         logger.info('Update and reboot asked')
-        for chat_id in self.state.chat_id_list:
-            self.bot.sendMessage(chat_id, 'Update and reboot asked')
-        subprocess.check_output(['cd',self.state.config.path])
-        subprocess.check_output(['git','pull','origin,master'])
-        logger.info('Update completed')
-        os.execv(self.state.config.path+'main.py',[''])
+        try:
+            for chat_id in self.state.chat_id_list:
+                self.bot.sendMessage(chat_id, 'Update and reboot asked')
+            output = subprocess.check_output(
+                ['git','-C',self.state.config.path,
+                 'pull','origin','master'])
+            if 'Already up-to-date' in str(output):
+                logger.info('Update not needed')
+                for chat_id in self.state.chat_id_list:
+                    self.bot.sendMessage(chat_id, 'Already up-to-date')
+            else:
+                logger.info('Update completed')
+                os.execv(self.state.config.path+'main.py',[''])
+        except Exception as update_error:
+            logger.error('Update error')
+            logger.error(update_error)
         return
 
     def restart_raspotify(self):
