@@ -392,8 +392,17 @@ class AlarmControls:
                 elif 'snooze' in action:
                     if ((alarm_time-now).total_seconds() <= 60
                         and (now-alarm_time).total_seconds() <= 20*60):
-                        alarm_time = alarm_time + datetime.timedelta(
-                                                minutes=self.c.snooze_min)
+                        if 'manual' in alarm_type[0]:
+                            alarm_time = alarm_time + datetime.timedelta(
+                                                    minutes=self.c.snooze_min)
+                            logger.info('Manual alarm snooze')
+                        else: # Disable auto alarm and set manual alarm
+                            alarm_type[1] = 'disabled'
+                            new_alarm_time = alarm_time + datetime.timedelta(
+                                                    minutes=self.c.snooze_min)
+                            new_alarm_type = ['manual','enabled']
+                            alarms.append(self.alarm_time2str(new_alarm_type,new_alarm_time))
+                            logger.info('Auto alarm snooze')
                         success = True
                 alarms[index] = self.alarm_time2str(alarm_type,alarm_time)
         self.set_alarms(alarms)
