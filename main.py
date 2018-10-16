@@ -35,7 +35,13 @@ def on_chat_message(msg):
             for chat_id in state.chat_id_list:
                     bot.sendMessage(chat_id, __version__)    
         else:
-            cp.command_process(command)
+            try:
+                cp.command_process(command)
+            except Exception as err:
+                logger.error('Unexpected error')
+                logger.error(err)
+                for chat_id in state.chat_id_list:
+                    bot.sendMessage(chat_id, err) 
 
 def on_callback_query(msg):
     '''Executed when pressing a Telegram button'''
