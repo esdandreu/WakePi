@@ -519,7 +519,7 @@ class CommandProcess:
     def reboot(self):
         logger.info('Reebot...')
         for chat_id in self.state.chat_id_list:
-            self.bot.sendMessage(chat_id, 'Reboot asked')
+            self.bot.sendMessage(chat_id, 'Reebot...')
             self.bot.sendMessage(chat_id, 'Type the correct password')
         os.execv(self.state.config.path+'/main.py',[''])
         return
@@ -528,7 +528,7 @@ class CommandProcess:
         logger.info('Update...')
         try:
             for chat_id in self.state.chat_id_list:
-                self.bot.sendMessage(chat_id, 'Update and reboot asked')
+                self.bot.sendMessage(chat_id, 'Update...')
             output = subprocess.check_output(
                 ['git','-C',self.state.config.path,
                  'pull','origin','master'])
