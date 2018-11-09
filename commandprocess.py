@@ -518,24 +518,21 @@ class CommandProcess:
 
     def reboot(self):
         logger.info('Reebot...')
-        for chat_id in self.state.chat_id_list:
-            self.bot.sendMessage(chat_id, 'Reebot...')
-            self.bot.sendMessage(chat_id, 'Type the correct password')
+        self.state.send_msg('Reebot...')
+        self.state.send_msg('Type the correct password')
         os.execv(self.state.config.path+'/main.py',[''])
         return
 
     def update(self):
         logger.info('Update...')
         try:
-            for chat_id in self.state.chat_id_list:
-                self.bot.sendMessage(chat_id, 'Update...')
+            self.state.send_msg('Update...')
             output = subprocess.check_output(
                 ['git','-C',self.state.config.path,
                  'pull','origin','master'])
             if 'Already up-to-date' in str(output):
                 logger.info('Update not needed')
-                for chat_id in self.state.chat_id_list:
-                    self.bot.sendMessage(chat_id, 'Already up-to-date')
+                self.state.send_msg('Already up-to-date')
             else:
                 logger.info('Update completed')
                 self.reboot()
@@ -547,7 +544,6 @@ class CommandProcess:
     def restart_raspotify(self):
         logger.info('Restart raspotify')
         subprocess.check_output(['sudo','systemctl','restart','raspotify'])
-        for chat_id in self.state.chat_id_list:
-            self.bot.sendMessage(chat_id, 'Spotify device restarted\n'
+        self.state.send_msg('Spotify device restarted\n'
                                  +'Check internet connection if still fails')
         return

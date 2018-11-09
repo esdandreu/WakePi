@@ -431,12 +431,6 @@ class State( object ):
                                    - len(text))/2)*'-' + text
                                    + int((self.max_reply_line_length +1
                                    - len(text))/2)*'-' + '`')
-
-    def send_chat_action(self,action):
-        '''Valid actions: upload_audio, typing
-           '''
-        for chat_id in self.chat_id_list:
-            self.bot.sendChatAction(chat_id,action)
       
     def auto_refresh_dashboard(self):
         ''' Process performed in parallel with the 'mpc idle' command
@@ -542,3 +536,13 @@ class State( object ):
             bot.deleteMessage(self.last_reply_msg[chat_count])
         except Exception:
             logger.warning('First msg?')
+
+    def send_msg(self,message):
+        for chat_id in self.chat_id_list:
+            self.bot.sendMessage(chat_id, message)
+            
+    def send_chat_action(self,action):
+        '''Valid actions: upload_audio, typing
+           '''
+        for chat_id in self.chat_id_list:
+            self.bot.sendChatAction(chat_id,action)

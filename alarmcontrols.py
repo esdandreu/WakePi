@@ -23,6 +23,7 @@ class AlarmControls:
         
     def ring(self):
         '''Plays the alarm music'''
+        self.c = self.get_config() # probably is better to refresh config in main
         while self.state.auto_refresh_enabled: 
             self.state.auto_refresh_enabled = False
         self.state.music_status.mopidy_playing = True
