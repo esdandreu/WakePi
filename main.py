@@ -79,7 +79,7 @@ def time_check(state):
             if not 'ringing' in state():
                 if (now-last_alarm_check).total_seconds() > PERIOD_ALARM_CHECK:
                     last_alarm_check = now
-                    alarm.alarm_check()
+                    state.alarm.alarm_check()
                     ringing_time = 0
             else:
                 if (now-last_ringing_check).total_seconds() >= PERIOD_RINGING_CHECK:
