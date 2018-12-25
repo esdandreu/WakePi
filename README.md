@@ -133,7 +133,7 @@ client_secret = 65704cb4f9e841e7b2601882ced44e89
 ```
 To save the changes and exit press "Ctrl+X", then "Y" and "Enter".
 You need a premium account. If you are logged with facebook check this: [username](https://www.spotify.com/account/overview/) [password](https://www.spotify.com/au/account/set-device-password/)
-I give you the client_id and the client_secret of my Spotify app, if you prefer to create your you can do it [here](https://developer.spotify.com/my-applications/#!/applications)
+I give you the client_id and the client_secret of my Spotify app, if you prefer to create yours you can do it [here](https://developer.spotify.com/my-applications/#!/applications)
 
 **Then go to the config.txt located in the WakePi folder and add there the username too.**
 You don't need to add the password there but the first time you run the code you will be prompt to log in your spotify account and grant access to the app, then you have to copy the full url of the webpage you have been redirected (google) and paste it in the terminal ("Ctrl+Mayus+V")
@@ -161,7 +161,7 @@ And that's all folks! Reboot the RPi and check that everything works correctly.
 
 ### Sync with google calendar (or other ical calendars)
 
-In the telegram UI (bot), once you send the password and press "menu" you will see a configuration opion, there you can add calendars in a url ical format. [How to get that url from google calendar](https://mas.echurchgiving.com/hc/en-us/articles/115004079647-How-do-I-get-an-iCal-feed-from-Google-Calendar-)
+In the telegram UI (bot), once you send the password and press "menu" you will see a configuration option, there you can add calendars in a url ical format. [How to get that url from google calendar](https://mas.echurchgiving.com/hc/en-us/articles/115004079647-How-do-I-get-an-iCal-feed-from-Google-Calendar-)
 
 ## Authors
 
